@@ -32,17 +32,6 @@ export const getFooterRes = async (): Promise<FooterProps> => {
   return response[0][0];
 };
 
-export const getAllEntries = async (): Promise<Page[]> => {
-  const response = (await getEntry({
-    contentTypeUid: "page",
-    referenceFieldPath: undefined,
-    jsonRtePath: undefined,
-  })) as Page[][];
-  liveEdit &&
-    response[0].forEach((entry) => addEditableTags(entry, "page", true));
-  return response[0];
-};
-
 export const getPageRes = async (entryUrl: string): Promise<Page> => {
   const response = (await getEntryByUrl({
     contentTypeUid: "page",
