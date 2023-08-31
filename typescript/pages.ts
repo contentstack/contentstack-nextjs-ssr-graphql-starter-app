@@ -1,6 +1,6 @@
 import { Component } from "../typescript/component";
 import { Image } from "../typescript/action";
-import { Entry, HeaderProps ,FooterProps } from "./layout";
+import { Entry, HeaderProps, FooterProps } from "./layout";
 
 type AdditionalParam = {
   title: string;
@@ -14,13 +14,13 @@ type AdditionalParam = {
   html_code: string;
   body: string;
   date: string;
-  uid:string;
+  uid: string;
   related_post: [];
   copyright: string;
   announcement_text: string;
   label: {};
   url: string;
-}
+};
 
 type Post = {
   url: string;
@@ -31,30 +31,30 @@ type Post = {
   date: string;
   author: [Author];
   $: AdditionalParam;
-}
+};
 
 type Author = {
   title: string;
   $: AdditionalParam;
-}
+};
 
 type PageProps = {
   page: Page;
   posts: [];
-  archivePost: []; 
+  archivePost: [];
   blogPost: BlogPosts;
-}
+};
 
 type Seo = {
-  enable_search_indexing: boolean
-}
+  enable_search_indexing: boolean;
+};
 
 type Blog = {
   url: string;
   body: string;
   title: string;
   $: AdditionalParam;
-}
+};
 
 export type Props = {
   page: Page;
@@ -64,31 +64,20 @@ export type Props = {
   pageProps: PageProps;
   header: HeaderProps;
   footer: FooterProps;
-}
+};
 
-export type Page ={
+export type Page = {
   page_components: Component[];
   uid: string;
   locale: string;
   url: string;
   seo: Seo;
   title: string;
-}
+};
 
-export type Context = {
-  resolvedUrl: string;
-  setHeader: Function;
-  write: Function;
-  end: Function;
-}
+export type Pages = [page: Page];
 
-export type Pages = [
-  page: Page
-]
-
-export type PostPage = [
-  post: Post
-]
+export type PostPage = [post: Post];
 
 export type PageUrl = string;
 
@@ -102,8 +91,8 @@ export type BlogPosts = {
   featured_image: Image;
   is_archived: boolean;
   seo: Seo;
-  uid:string;
+  uid: string;
   url: string;
   _owner: string;
   $: AdditionalParam;
-}
+};

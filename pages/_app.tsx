@@ -1,4 +1,4 @@
-import App from "next/app";
+import App, { AppContext } from "next/app";
 import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
@@ -38,7 +38,9 @@ function MyApp(props: Props) {
     }
     return metaArr;
   };
+
   const blogList: any = posts?.concat(archivePost);
+
   return (
     <>
       <Head>
@@ -56,6 +58,7 @@ function MyApp(props: Props) {
         <title>Contentstack-Nextjs-Starter-App</title>
         {page?.seo && page.seo.enable_search_indexing && metaData(page.seo)}
       </Head>
+
       <Layout
         header={header}
         footer={footer}
@@ -69,7 +72,7 @@ function MyApp(props: Props) {
   );
 }
 
-MyApp.getInitialProps = async (appContext: any) => {
+MyApp.getInitialProps = async (appContext: AppContext) => {
   const appProps = await App.getInitialProps(appContext);
   const header = await getHeaderRes();
   const footer = await getFooterRes();

@@ -34,7 +34,7 @@ ContentstackLivePreview.init({
     environment: envConfig.CONTENTSTACK_ENVIRONMENT,
   },
   enable: envConfig.CONTENTSTACK_LIVE_PREVIEW === "true",
-  ssr: false,
+  ssr: true,
 })?.catch((err) => console.error(err));
 
 export const renderOption = {

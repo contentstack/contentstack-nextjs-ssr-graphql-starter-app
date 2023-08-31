@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import RenderComponents from "../components/render-components";
-import { getPageRes } from "../helper";
+import { getPageRes, getPathOnly } from "../helper";
 import Skeleton from "react-loading-skeleton";
-import { Props, Context } from "../typescript/pages";
+import { Props } from "../typescript/pages";
+import { GetServerSidePropsContext } from "next";
 
 export default function Home(props: Props) {
   const { page } = props;
@@ -21,16 +22,19 @@ export default function Home(props: Props) {
   );
 }
 
-export async function getServerSideProps(context: Context) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
-    const entryRes = await getPageRes(context.resolvedUrl);
+    const entryUrl = getPathOnly(context.resolvedUrl);
+    const entryRes = await getPageRes(entryUrl);
+
     return {
       props: {
-        entryUrl: context.resolvedUrl,
         page: entryRes,
       },
     };
   } catch (error) {
-    return { notFound: true };
+    return {
+      notFound: true,
+    };
   }
 }

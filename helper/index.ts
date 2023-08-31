@@ -785,3 +785,9 @@ export const getBlogPostRes = async (entryUrl: string): Promise<BlogPosts> => {
 
   return blogs[0] as BlogPosts;
 };
+
+export function getPathOnly(path: string) {
+  // remove query params
+  const pathOnly = path.split("?")[0];
+  return pathOnly;
+}
