@@ -5,7 +5,7 @@
   "private": true,
   "author": "Contentstack",
   "scripts": {
-    "dev": "next dev -p",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
