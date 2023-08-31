@@ -3,9 +3,11 @@ import RenderComponents from "../components/render-components";
 import { getPageRes, getPathOnly } from "../helper";
 import Skeleton from "react-loading-skeleton";
 import { Props } from "../typescript/pages";
-import { GetServerSidePropsContext } from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-export default function Home(props: Props) {
+export default function Home(
+  props: InferGetServerSidePropsType<typeof getServerSideProps>
+) {
   const { page } = props;
 
   const [getEntry] = useState(page);
@@ -22,7 +24,9 @@ export default function Home(props: Props) {
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export const getServerSideProps: GetServerSideProps<{
+  page: Props["page"];
+}> = async (context) => {
   try {
     const entryUrl = getPathOnly(context.resolvedUrl);
     const entryRes = await getPageRes(entryUrl);
@@ -37,4 +41,4 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       notFound: true,
     };
   }
-}
+};

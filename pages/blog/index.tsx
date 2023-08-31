@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import BlogList from "../../components/blog-list";
 import RenderComponents from "../../components/render-components";
-import { getPageRes, getBlogListRes } from "../../helper";
+import { getPageRes, getBlogListRes, getPathOnly } from "../../helper";
 
 import ArchiveRelative from "../../components/archive-relative";
 import Skeleton from "react-loading-skeleton";
-import { Page, PostPage, Context } from "../../typescript/pages";
+import { Page, PostPage } from "../../typescript/pages";
+import { GetServerSideProps } from "next";
 
 export default function Blog({
   page,
@@ -56,14 +57,13 @@ export default function Blog({
   );
 }
 
-export async function getServerSideProps(context: Context) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    const page = await getPageRes(context.resolvedUrl);
+    const page = await getPageRes(getPathOnly(context.resolvedUrl));
     const { archivedBlogs, recentBlogs } = await getBlogListRes();
 
     return {
       props: {
-        pageUrl: context.resolvedUrl,
         page,
         posts: recentBlogs,
         archivePost: archivedBlogs,
@@ -73,4 +73,4 @@ export async function getServerSideProps(context: Context) {
     console.error(error);
     return { notFound: true };
   }
-}
+};

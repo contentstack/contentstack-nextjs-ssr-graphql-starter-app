@@ -3,8 +3,11 @@ import RenderComponents from "../components/render-components";
 import { getPageRes } from "../helper";
 import Skeleton from "react-loading-skeleton";
 import { Props } from "../typescript/pages";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-export default function Page(props: Props) {
+export default function Page(
+  props: InferGetServerSidePropsType<typeof getServerSideProps>
+) {
   const { page } = props;
   const [getEntry] = useState(page);
 
@@ -20,10 +23,14 @@ export default function Page(props: Props) {
   );
 }
 
-export async function getServerSideProps({ params }: any) {
+export const getServerSideProps: GetServerSideProps<{
+  page: Props["page"];
+}> = async ({ params }) => {
+  if (!params || !params.page) return { notFound: true };
+
   try {
     const entryUrl = params.page.includes("/")
-      ? params.page
+      ? (params.page as string)
       : `/${params.page}`;
     const entryRes = await getPageRes(entryUrl);
 
@@ -31,11 +38,10 @@ export async function getServerSideProps({ params }: any) {
 
     return {
       props: {
-        entryUrl: entryUrl,
         page: entryRes,
       },
     };
   } catch (error) {
     return { notFound: true };
   }
-}
+};
