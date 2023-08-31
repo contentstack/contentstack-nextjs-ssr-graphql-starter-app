@@ -10,6 +10,7 @@ import "../styles/style.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import "@contentstack/live-preview-utils/dist/main.css";
 import { Props } from "../typescript/pages";
+import ContentstackLivePreview from "@contentstack/live-preview-utils";
 
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
@@ -74,6 +75,8 @@ function MyApp(props: Props) {
 
 MyApp.getInitialProps = async (appContext: AppContext) => {
   const appProps = await App.getInitialProps(appContext);
+  ContentstackLivePreview.setConfigFromParams(appContext.ctx.query);
+
   const header = await getHeaderRes();
   const footer = await getFooterRes();
 
