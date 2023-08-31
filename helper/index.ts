@@ -477,56 +477,33 @@ query PageQuery($url: String!) {
   }
 
   if (page.page_components.find((item: any) => item.section_with_buckets)) {
-    const section_with_buckets = final_data.page_components.find(
-      (item: any) => item.section_with_buckets
-    ).section_with_buckets;
-
-    const jsons: any[] = [];
-    section_with_buckets.buckets.forEach((bucket: any) => {
-      bucket.icon = bucket.iconConnection.edges[0].node;
-      jsons.push(bucket.description.json);
-    });
-
-    const temp = {
-      uid: "temp_uid_to_fool",
-      jsons: jsons,
-    };
-
-    Utils.jsonToHTML({
-      entry: temp,
-      paths: ["jsons"],
+    Utils.GQL.jsonToHTML({
+      entry: final_data,
+      paths: ["page_components.section_with_buckets.buckets.description"],
       renderOption: renderOption,
-    });
-
-    section_with_buckets.buckets.forEach((bucket: any) => {
-      bucket.description = temp.jsons.shift();
     });
   }
 
   if (page.page_components.find((item: any) => item.from_blog)) {
-    const featured_blogs = final_data.page_components.find(
-      (item: any) => item.from_blog
-    ).from_blog;
-    const jsons: any[] = [];
-    featured_blogs.featured_blogs =
-      featured_blogs.featured_blogsConnection.edges.map((edge: any) => {
-        jsons.push(edge.node.body.json);
-        return edge.node;
-      });
-
-    const temp = {
-      uid: "temp_uid_to_fool",
-      jsons: jsons,
-    };
-
-    Utils.jsonToHTML({
-      entry: temp,
-      paths: ["jsons"],
+    Utils.GQL.jsonToHTML({
+      entry: final_data,
+      paths: [
+        "page_components.from_blog.featured_blogsConnection.edges.node.body",
+      ],
       renderOption: renderOption,
     });
 
-    featured_blogs.featured_blogs.forEach((blog: any) => {
-      blog.body = temp.jsons.shift();
+    const from_blog = final_data.page_components.find(
+      (item: any) => item.from_blog
+    ).from_blog;
+
+    from_blog.featured_blogs = from_blog.featured_blogsConnection.edges.map(
+      (edge: any) => {
+        return edge.node;
+      }
+    );
+
+    from_blog.featured_blogs.forEach((blog: any) => {
       blog.featured_image = blog.featured_imageConnection.edges[0].node;
     });
   }
@@ -561,15 +538,10 @@ query PageQuery($url: String!) {
       }
     });
 
-    all.forEach((section_with_html_code) => {
-      section_with_html_code.description =
-        section_with_html_code.description.json;
-
-      Utils.jsonToHTML({
-        entry: section_with_html_code,
-        paths: ["description"],
-        renderOption: renderOption,
-      });
+    Utils.GQL.jsonToHTML({
+      entry: final_data,
+      paths: ["page_components.section_with_html_code.description"],
+      renderOption: renderOption,
     });
   }
 
@@ -631,31 +603,18 @@ query BlogListQuery {
   const archivedBlogs = [] as BlogPosts[];
   const recentBlogs = [] as BlogPosts[];
 
-  const jsons = [] as any[];
-
   blogs.forEach((blog: any) => {
     if (blog.is_archived) {
       archivedBlogs.push(blog);
     } else {
       recentBlogs.push(blog);
     }
-
-    jsons.push(blog.body.json);
   });
 
-  const temp = {
-    uid: "temp_uid_to_fool",
-    jsons: jsons,
-  };
-
-  Utils.jsonToHTML({
-    entry: temp,
-    paths: ["jsons"],
+  Utils.GQL.jsonToHTML({
+    entry: blogs,
+    paths: ["body"],
     renderOption: renderOption,
-  });
-
-  blogs.forEach((blog: any) => {
-    blog.body = temp.jsons.shift();
   });
 
   liveEdit &&
@@ -739,46 +698,10 @@ export const getBlogPostRes = async (entryUrl: string): Promise<BlogPosts> => {
     blog.uid = blog.system.uid;
   });
 
-  const jsons = [] as any[];
-
-  blogs.forEach((blog: any) => {
-    jsons.push(blog.body.json);
-  });
-
-  const temp = {
-    uid: "temp_uid_to_fool",
-    jsons: jsons,
-  };
-
-  Utils.jsonToHTML({
-    entry: temp,
-    paths: ["jsons"],
+  Utils.GQL.jsonToHTML({
+    entry: blogs,
+    paths: ["body", "related_post.body"],
     renderOption: renderOption,
-  });
-
-  blogs.forEach((blog: any) => {
-    blog.body = temp.jsons.shift();
-  });
-
-  const jsons2 = [] as any[];
-
-  blogs[0].related_post.forEach((blog: any) => {
-    jsons2.push(blog.body.json);
-  });
-
-  const temp2 = {
-    uid: "temp_uid_to_fool",
-    jsons: jsons2,
-  };
-
-  Utils.jsonToHTML({
-    entry: temp2,
-    paths: ["jsons"],
-    renderOption: renderOption,
-  });
-
-  blogs[0].related_post.forEach((blog: any) => {
-    blog.body = temp2.jsons.shift();
   });
 
   liveEdit && Utils.addEditableTags(blogs[0], "blog_post", true);
