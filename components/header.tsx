@@ -3,32 +3,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import parse from "html-react-parser";
 import Tooltip from "./tool-tip";
-import { onEntryChange } from "../contentstack-sdk";
-import { getHeaderRes } from "../helper";
 import Skeleton from "react-loading-skeleton";
 import { HeaderProps, Entry, NavLinks } from "../typescript/layout";
 
 export default function Header({ header }: { header: HeaderProps }) {
   const router = useRouter();
-  const [getHeader, setHeader] = useState(header);
-
-  async function fetchData() {
-    try {
-      if (header) {
-        const headerRes = await getHeaderRes();
-        setHeader(headerRes);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    if (header) {
-      onEntryChange(() => fetchData());
-    }
-  }, [header]);
-  const headerData = getHeader ? getHeader : undefined;
+  const [headerData] = useState(header);
 
   return (
     <header className="header">

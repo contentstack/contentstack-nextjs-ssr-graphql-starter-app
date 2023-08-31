@@ -1,49 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import parse from "html-react-parser";
-import { onEntryChange } from "../contentstack-sdk";
-import { getFooterRes } from "../helper";
 import Skeleton from "react-loading-skeleton";
-import { FooterProps, Entry, Links } from "../typescript/layout";
+import { FooterProps } from "../typescript/layout";
 
 export default function Footer({ footer }: { footer: FooterProps }) {
-  const [getFooter, setFooter] = useState(footer);
-
-  function buildNavigation(ent: Entry, ft: FooterProps) {
-    let newFooter = { ...ft };
-    if (ent.length !== newFooter.navigation.link.length) {
-      ent.forEach((entry) => {
-        const fFound = newFooter?.navigation.link.find(
-          (nlink: Links) => nlink.title === entry.title
-        );
-        if (!fFound) {
-          newFooter.navigation.link?.push({
-            title: entry.title,
-            href: entry.url,
-            $: entry.$,
-          });
-        }
-      });
-    }
-    return newFooter;
-  }
-
-  async function fetchData() {
-    try {
-      if (footer) {
-        const footerRes = await getFooterRes();
-        setFooter(footerRes);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    onEntryChange(() => fetchData());
-  }, [footer]);
-
-  const footerData = getFooter ? getFooter : undefined;
+  const [footerData] = useState(footer);
 
   return (
     <footer>
