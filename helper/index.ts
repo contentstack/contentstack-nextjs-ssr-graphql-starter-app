@@ -462,8 +462,6 @@ query PageQuery($url: String!) {
       (item: any) => item.hero_banner
     ).hero_banner;
 
-    console.log(JSON.stringify(hero_banner, null, 2));
-
     if (hero_banner.banner_imageConnection?.edges[0]?.node) {
       hero_banner.banner_image =
         hero_banner.banner_imageConnection?.edges[0]?.node;
