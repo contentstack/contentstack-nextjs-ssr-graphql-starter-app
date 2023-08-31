@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import RenderComponents from "../components/render-components";
 import { getPageRes } from "../helper";
 import Skeleton from "react-loading-skeleton";
 import { Props, Context } from "../typescript/pages";
 
 export default function Home(props: Props) {
-  const { page, entryUrl } = props;
+  const { page } = props;
 
-  const [getEntry, setEntry] = useState(page);
+  const [getEntry] = useState(page);
 
   return getEntry ? (
     <RenderComponents

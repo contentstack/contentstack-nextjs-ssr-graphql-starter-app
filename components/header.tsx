@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import parse from "html-react-parser";
 import Tooltip from "./tool-tip";
 import Skeleton from "react-loading-skeleton";
-import { HeaderProps, Entry, NavLinks } from "../typescript/layout";
+import { HeaderProps } from "../typescript/layout";
 
 export default function Header({ header }: { header: HeaderProps }) {
   const router = useRouter();
