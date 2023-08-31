@@ -1,9 +1,8 @@
 import * as Utils from "@contentstack/utils";
-import { addEditableTags } from "@contentstack/utils";
 import { Page, BlogPosts } from "../typescript/pages";
 import getConfig from "next/config";
 import { FooterProps, HeaderProps } from "../typescript/layout";
-import { getEntry, getEntryByUrl, renderOption } from "../contentstack-sdk";
+import { renderOption } from "../contentstack-sdk";
 
 const { publicRuntimeConfig } = getConfig();
 const envConfig = process.env.CONTENTSTACK_API_KEY
@@ -673,12 +672,118 @@ query BlogListQuery {
 };
 
 export const getBlogPostRes = async (entryUrl: string): Promise<BlogPosts> => {
-  const response = (await getEntryByUrl({
-    contentTypeUid: "blog_post",
-    entryUrl,
-    referenceFieldPath: ["author", "related_post"],
-    jsonRtePath: ["body", "related_post.body"],
-  })) as BlogPosts[];
-  liveEdit && addEditableTags(response[0], "blog_post", true);
-  return response[0];
+  const query = `
+
+  query BlogPostQuery($url: String!) {
+    all_blog_post(where: {url: $url}) {
+      items {
+        url
+        title
+        featured_imageConnection {
+          edges {
+            node {
+              url
+            }
+          }
+        }
+        is_archived
+        date
+        authorConnection {
+          edges {
+            node {
+              ... on Author {
+                title
+              }
+            }
+          }
+        }
+        body {
+          json
+        }
+        related_postConnection {
+          edges {
+            node {
+              ... on BlogPost {
+                title
+                url
+                body {
+                  json
+                }
+              }
+            }
+          }
+        }
+        system {
+          uid
+        }
+      }
+    }
+  }
+  
+  `;
+
+  const res = await gqlRequest(query, {
+    variables: {
+      url: entryUrl,
+    },
+  });
+
+  const data = await res.json();
+
+  const blogs = data.data.all_blog_post.items;
+
+  blogs.forEach((blog: any) => {
+    blog.featured_image = blog.featured_imageConnection.edges[0].node;
+    blog.author = [blog.authorConnection.edges[0].node];
+    blog.related_post = blog.related_postConnection.edges.map(
+      (edge: any) => edge.node
+    );
+    blog.uid = blog.system.uid;
+  });
+
+  const jsons = [] as any[];
+
+  blogs.forEach((blog: any) => {
+    jsons.push(blog.body.json);
+  });
+
+  const temp = {
+    uid: "temp_uid_to_fool",
+    jsons: jsons,
+  };
+
+  Utils.jsonToHTML({
+    entry: temp,
+    paths: ["jsons"],
+    renderOption: renderOption,
+  });
+
+  blogs.forEach((blog: any) => {
+    blog.body = temp.jsons.shift();
+  });
+
+  const jsons2 = [] as any[];
+
+  blogs[0].related_post.forEach((blog: any) => {
+    jsons2.push(blog.body.json);
+  });
+
+  const temp2 = {
+    uid: "temp_uid_to_fool",
+    jsons: jsons2,
+  };
+
+  Utils.jsonToHTML({
+    entry: temp2,
+    paths: ["jsons"],
+    renderOption: renderOption,
+  });
+
+  blogs[0].related_post.forEach((blog: any) => {
+    blog.body = temp2.jsons.shift();
+  });
+
+  liveEdit && Utils.addEditableTags(blogs[0], "blog_post", true);
+
+  return blogs[0] as BlogPosts;
 };
