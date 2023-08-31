@@ -581,15 +581,95 @@ query PageQuery($url: String!) {
   return final_data;
 };
 
-export const getBlogListRes = async (): Promise<BlogPosts[]> => {
-  const response = (await getEntry({
-    contentTypeUid: "blog_post",
-    referenceFieldPath: ["author", "related_post"],
-    jsonRtePath: ["body"],
-  })) as BlogPosts[][];
+export const getBlogListRes = async (): Promise<{
+  archivedBlogs: BlogPosts[];
+  recentBlogs: BlogPosts[];
+}> => {
+  const query = `
+query BlogListQuery {
+  all_blog_post {
+    items {
+      url
+      title
+      featured_imageConnection {
+        edges {
+          node {
+            url
+          }
+        }
+      }
+      is_archived
+      date
+      authorConnection {
+        edges {
+          node {
+            ... on Author {
+              title
+            }
+          }
+        }
+      }
+      body {
+        json
+      }
+    }
+  }
+}
+`;
+
+  const res = await gqlRequest(query, {
+    // BUG: assets will not be fetched if operationName is not provided
+    operationName: "BlogListQuery",
+  });
+
+  const data = await res.json();
+
+  const blogs = data.data.all_blog_post.items;
+
+  blogs.forEach((blog: any) => {
+    blog.featured_image = blog.featured_imageConnection.edges[0].node;
+    blog.author = [blog.authorConnection.edges[0].node];
+  });
+
+  const archivedBlogs = [] as BlogPosts[];
+  const recentBlogs = [] as BlogPosts[];
+
+  const jsons = [] as any[];
+
+  blogs.forEach((blog: any) => {
+    if (blog.is_archived) {
+      archivedBlogs.push(blog);
+    } else {
+      recentBlogs.push(blog);
+    }
+
+    jsons.push(blog.body.json);
+  });
+
+  const temp = {
+    uid: "temp_uid_to_fool",
+    jsons: jsons,
+  };
+
+  Utils.jsonToHTML({
+    entry: temp,
+    paths: ["jsons"],
+    renderOption: renderOption,
+  });
+
+  blogs.forEach((blog: any) => {
+    blog.body = temp.jsons.shift();
+  });
+
   liveEdit &&
-    response[0].forEach((entry) => addEditableTags(entry, "blog_post", true));
-  return response[0];
+    blogs.forEach((entry: any) =>
+      Utils.addEditableTags(entry, "blog_post", true)
+    );
+
+  return {
+    archivedBlogs,
+    recentBlogs,
+  };
 };
 
 export const getBlogPostRes = async (entryUrl: string): Promise<BlogPosts> => {

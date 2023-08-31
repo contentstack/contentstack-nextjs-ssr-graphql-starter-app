@@ -59,23 +59,14 @@ export default function Blog({
 export async function getServerSideProps(context: Context) {
   try {
     const page = await getPageRes(context.resolvedUrl);
-    const result = await getBlogListRes();
+    const { archivedBlogs, recentBlogs } = await getBlogListRes();
 
-    const archivePost = [] as any;
-    const posts = [] as any;
-    result.forEach((blogs) => {
-      if (blogs.is_archived) {
-        archivePost.push(blogs);
-      } else {
-        posts.push(blogs);
-      }
-    });
     return {
       props: {
         pageUrl: context.resolvedUrl,
         page,
-        posts,
-        archivePost,
+        posts: recentBlogs,
+        archivePost: archivedBlogs,
       },
     };
   } catch (error) {
