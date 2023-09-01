@@ -1,30 +1,24 @@
-import React, { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
-import Tooltip from "./tool-tip";
+import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import Tooltip from './tool-tip';
 
-const DynamicJsonViewer = dynamic(
-  () =>
-    import("@textea/json-viewer").then((module) => ({
-      default: module.JsonViewer,
-    })),
-  { ssr: false }
-);
+const DynamicJsonViewer = dynamic(() => import('@textea/json-viewer').then((module) => ({ default: module.JsonViewer })), { ssr: false });
 
 function filterObject(inputObject: any) {
   const unWantedProps = [
-    "_version",
-    "ACL",
-    "_owner",
-    "_in_progress",
-    "created_at",
-    "created_by",
-    "updated_at",
-    "updated_by",
-    "publish_details",
+    '_version',
+    'ACL',
+    '_owner',
+    '_in_progress',
+    'created_at',
+    'created_by',
+    'updated_at',
+    'updated_by',
+    'publish_details',
   ];
   for (const key in inputObject) {
     unWantedProps.includes(key) && delete inputObject[key];
-    if (typeof inputObject[key] !== "object") {
+    if (typeof inputObject[key] !== 'object') {
       continue;
     }
     inputObject[key] = filterObject(inputObject[key]);
@@ -69,11 +63,11 @@ const DevTools = ({ response }: any) => {
             </h2>
             <span
               className="json-copy"
-              onClick={() => copyObject(JSON.stringify(filteredJson))}
+              onClick={(e) => copyObject(JSON.stringify(filteredJson))}
               aria-hidden="true"
             >
               <Tooltip
-                content={forceUpdate === 0 ? "Copy" : "Copied"}
+                content={forceUpdate === 0 ? 'Copy' : 'Copied'}
                 direction="top"
                 dynamic
                 delay={200}
@@ -99,12 +93,12 @@ const DevTools = ({ response }: any) => {
                     rootName="response"
                     displayDataTypes={false}
                     enableClipboard={false}
-                    style={{ color: "#C8501E" }}
+                    style={{ color: '#C8501E' }}
                   />
                 )}
               </pre>
             ) : (
-              ""
+              ''
             )}
           </div>
           <div className="modal-footer">
