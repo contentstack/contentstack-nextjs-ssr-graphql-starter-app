@@ -2,11 +2,50 @@ import React, { useState } from "react";
 import Link from "next/link";
 import parse from "html-react-parser";
 import Skeleton from "react-loading-skeleton";
-import { FooterProps } from "../typescript/layout";
+import { Entry, FooterProps, Links } from "../typescript/layout";
+import { getFooterRes } from "../helper";
 
-export default function Footer({ footer }: { footer: FooterProps }) {
-  const [footerData] = useState(footer);
+export default function Footer({
+  footer,
+  entries,
+}: {
+  footer: FooterProps;
+  entries: Entry;
+}) {
+  const [getFooter, setFooter] = useState(footer);
 
+  function buildNavigation(ent: Entry, ft: FooterProps) {
+    let newFooter = { ...ft };
+    if (ent.length !== newFooter.navigation.link.length) {
+      ent.forEach((entry) => {
+        const fFound = newFooter?.navigation.link.find(
+          (nlink: Links) => nlink.title === entry.title
+        );
+        if (!fFound) {
+          newFooter.navigation.link?.push({
+            title: entry.title,
+            href: entry.url,
+            $: entry.$,
+          });
+        }
+      });
+    }
+    return newFooter;
+  }
+
+  async function fetchData() {
+    try {
+      if (footer && entries) {
+        const footerRes = await getFooterRes();
+        const newfooter = buildNavigation(entries, footerRes);
+        setFooter(newfooter);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const footerData = getFooter ? getFooter : undefined;
   return (
     <footer>
       <div className="max-width footer-div">

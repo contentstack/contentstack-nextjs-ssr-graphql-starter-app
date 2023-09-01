@@ -3,7 +3,7 @@ import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import Layout from "../components/layout";
-import { getHeaderRes, getFooterRes } from "../helper";
+import { getHeaderRes, getFooterRes, getAllEntries } from "../helper";
 import "nprogress/nprogress.css";
 import "../styles/third-party.css";
 import "../styles/style.css";
@@ -66,6 +66,7 @@ function MyApp(props: Props) {
         page={page}
         blogPost={blogPost}
         blogList={blogList}
+        entries={props.entries}
       >
         <Component {...pageProps} />
       </Layout>
@@ -79,8 +80,9 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
 
   const header = await getHeaderRes();
   const footer = await getFooterRes();
+  const entries = await getAllEntries();
 
-  return { ...appProps, header, footer };
+  return { ...appProps, header, footer, entries };
 };
 
 export default MyApp;

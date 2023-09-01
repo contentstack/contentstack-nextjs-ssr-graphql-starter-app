@@ -714,3 +714,38 @@ export function getPathOnly(path: string) {
   const pathOnly = path.split("?")[0];
   return pathOnly;
 }
+
+export const getAllEntries = async (): Promise<Page[]> => {
+  const query = `
+  query AllEntries {
+    all_page {
+      total
+      items {
+        url
+        title
+        system {
+          uid
+        }
+      }
+    }
+  }
+`;
+
+  const res = await gqlRequest(query);
+  const data = await res.json();
+  const pages = data.data.all_page.items;
+
+  const transformed = pages.map((page: any) => {
+    return {
+      ...page,
+      uid: page.system.uid,
+    };
+  });
+
+  liveEdit &&
+    transformed.forEach((entry: any) =>
+      Utils.addEditableTags(entry, "page", true)
+    );
+
+  return transformed;
+};

@@ -1,14 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import parse from "html-react-parser";
 import Tooltip from "./tool-tip";
 import Skeleton from "react-loading-skeleton";
-import { HeaderProps } from "../typescript/layout";
+import { Entry, HeaderProps, NavLinks } from "../typescript/layout";
+import { getHeaderRes } from "../helper";
 
-export default function Header({ header }: { header: HeaderProps }) {
+export default function Header({
+  header,
+  entries,
+}: {
+  header: HeaderProps;
+  entries: Entry;
+}) {
   const router = useRouter();
-  const [headerData] = useState(header);
+  const [getHeader, setHeader] = useState(header);
+
+  function buildNavigation(ent: Entry, hd: HeaderProps) {
+    let newHeader = { ...hd };
+    if (ent.length !== newHeader.navigation_menu.length) {
+      ent.forEach((entry) => {
+        const hFound = newHeader?.navigation_menu.find(
+          (navLink: NavLinks) => navLink.label === entry.title
+        );
+        if (!hFound) {
+          newHeader.navigation_menu?.push({
+            label: entry.title,
+            page_reference: [
+              { title: entry.title, url: entry.url, $: entry.$ },
+            ],
+            $: {},
+          });
+        }
+      });
+    }
+    return newHeader;
+  }
+
+  async function fetchData() {
+    try {
+      if (header && entries) {
+        const headerRes = await getHeaderRes();
+        const newHeader = buildNavigation(entries, headerRes);
+        setHeader(newHeader);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const headerData = getHeader ? getHeader : undefined;
 
   return (
     <header className="header">
