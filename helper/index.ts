@@ -12,12 +12,12 @@ const envConfig = process.env.CONTENTSTACK_API_KEY
 const liveEdit = envConfig.CONTENTSTACK_LIVE_EDIT_TAGS === "true";
 import ContentstackLivePreview from "@contentstack/live-preview-utils";
 
-const graphqlUrl = new URL(
-  `https://dev11-graphql.csnonprod.com/stacks/${process.env.CONTENTSTACK_API_KEY}?environment=${process.env.CONTENTSTACK_ENVIRONMENT}`
-);
+const GRAPHQL_HOST_NAME = envConfig.CONTENTSTACK_GRAPHQL_HOST_NAME;
+const LIVE_PREVIEW_HOST_NAME = envConfig.CONTENTSTACK_LIVE_PREVIEW_HOST_NAME;
 
-const GRAPHQL_HOST_NAME = "dev11-graphql.csnonprod.com";
-const LIVE_PREVIEW_HOST_NAME = "dev11-preview.csnonprod.com";
+const graphqlUrl = new URL(
+  `https://${GRAPHQL_HOST_NAME}/stacks/${process.env.CONTENTSTACK_API_KEY}?environment=${process.env.CONTENTSTACK_ENVIRONMENT}`
+);
 
 function getHeaders() {
   const headers = new Headers();
