@@ -2,7 +2,6 @@ import * as Utils from "@contentstack/utils";
 import { Page, BlogPosts } from "../typescript/pages";
 import getConfig from "next/config";
 import { FooterProps, HeaderProps } from "../typescript/layout";
-import { renderOption } from "../contentstack-sdk";
 
 const { publicRuntimeConfig } = getConfig();
 const envConfig = process.env.CONTENTSTACK_API_KEY
@@ -748,4 +747,8 @@ export const getAllEntries = async (): Promise<Page[]> => {
     );
 
   return transformed;
+};
+
+export const renderOption = {
+  span: (node: any, next: any) => next(node.children),
 };
