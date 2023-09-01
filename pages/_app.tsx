@@ -1,3 +1,4 @@
+import "../utils/live-preview";
 import App, { AppContext } from "next/app";
 import Head from "next/head";
 import Router from "next/router";
