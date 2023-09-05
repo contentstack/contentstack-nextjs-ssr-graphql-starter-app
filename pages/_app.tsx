@@ -77,7 +77,9 @@ function MyApp(props: Props) {
 
 MyApp.getInitialProps = async (appContext: AppContext) => {
   const appProps = await App.getInitialProps(appContext);
-  ContentstackLivePreview.setConfigFromParams(appContext.ctx.query);
+  ContentstackLivePreview.setConfigFromParams(
+    appContext.ctx.query as Record<string, any>
+  );
 
   const header = await getHeaderRes();
   const footer = await getFooterRes();
