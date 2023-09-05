@@ -15,7 +15,7 @@ const GRAPHQL_HOST_NAME = envConfig.CONTENTSTACK_GRAPHQL_HOST_NAME;
 const LIVE_PREVIEW_HOST_NAME = envConfig.CONTENTSTACK_LIVE_PREVIEW_HOST_NAME;
 
 const graphqlUrl = new URL(
-  `https://${GRAPHQL_HOST_NAME}/stacks/${process.env.CONTENTSTACK_API_KEY}?environment=${process.env.CONTENTSTACK_ENVIRONMENT}`
+  `https://${GRAPHQL_HOST_NAME}/stacks/${envConfig.CONTENTSTACK_API_KEY}?environment=${envConfig.CONTENTSTACK_ENVIRONMENT}`
 );
 
 function getHeaders() {
@@ -23,7 +23,7 @@ function getHeaders() {
   headers.append("Content-Type", "application/json");
   headers.append(
     "access_token",
-    process.env.CONTENTSTACK_DELIVERY_TOKEN as string
+    envConfig.CONTENTSTACK_DELIVERY_TOKEN as string
   );
   return headers;
 }
@@ -42,7 +42,7 @@ const gqlRequest = async (
     headers.append("live_preview", hash);
     headers.append(
       "authorization",
-      process.env.CONTENTSTACK_MANAGEMENT_TOKEN as string
+      envConfig.CONTENTSTACK_MANAGEMENT_TOKEN as string
     );
     graphqlUrl.hostname = LIVE_PREVIEW_HOST_NAME;
   } else {
