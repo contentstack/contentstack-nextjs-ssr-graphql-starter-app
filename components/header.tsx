@@ -17,8 +17,8 @@ export default function Header({
   const router = useRouter();
   const [getHeader, setHeader] = useState(header);
 
-  function buildNavigation(ent: Entry, hd: HeaderProps) {
-    let newHeader = { ...hd };
+  function buildNavigation(ent: Entry, prevHeader: HeaderProps) {
+    let newHeader = { ...prevHeader };
     if (ent.length !== newHeader.navigation_menu.length) {
       ent.forEach((entry) => {
         const hFound = newHeader?.navigation_menu.find(
@@ -49,6 +49,12 @@ export default function Header({
       console.error(error);
     }
   }
+
+  useEffect(() => {
+    if (header && entries) {
+      fetchData();
+    }
+  }, [header]);
 
   const headerData = getHeader ? getHeader : undefined;
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import parse from "html-react-parser";
 import Skeleton from "react-loading-skeleton";
@@ -44,6 +44,10 @@ export default function Footer({
       console.error(error);
     }
   }
+
+  useEffect(() => {
+    fetchData();
+  }, [footer]);
 
   const footerData = getFooter ? getFooter : undefined;
   return (

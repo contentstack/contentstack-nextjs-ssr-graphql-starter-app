@@ -11,23 +11,21 @@ import { GetServerSideProps } from "next";
 export default function Blog({
   page,
   posts,
-  archivePost,
+  archivePosts,
 }: {
   page: Page;
   posts: PostPage;
-  archivePost: PostPage;
+  archivePosts: PostPage;
 }) {
-  const [getBanner] = useState(page);
-
   return (
     <>
-      {getBanner.page_components ? (
+      {page.page_components ? (
         <RenderComponents
-          pageComponents={getBanner.page_components}
+          pageComponents={page.page_components}
           blogPost
           contentTypeUid="page"
-          entryUid={getBanner.uid}
-          locale={getBanner.locale}
+          entryUid={page.uid}
+          locale={page.locale}
         />
       ) : (
         <Skeleton height={400} />
@@ -43,11 +41,11 @@ export default function Blog({
           )}
         </div>
         <div className="blog-column-right">
-          {getBanner && getBanner.page_components[1].widget && (
-            <h2>{getBanner.page_components[1].widget.title_h2}</h2>
+          {page && page.page_components[1].widget && (
+            <h2>{page.page_components[1].widget.title_h2}</h2>
           )}
-          {archivePost ? (
-            <ArchiveRelative blogs={archivePost} />
+          {archivePosts ? (
+            <ArchiveRelative blogs={archivePosts} />
           ) : (
             <Skeleton height={600} width={300} />
           )}
@@ -66,7 +64,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       props: {
         page,
         posts: recentBlogs,
-        archivePost: archivedBlogs,
+        archivePosts: archivedBlogs,
       },
     };
   } catch (error) {

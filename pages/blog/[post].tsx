@@ -14,8 +14,7 @@ export default function BlogPost({
   blogPost: BlogPosts;
   page: Page;
 }) {
-  const [getPost] = useState({ banner: page, post: blogPost });
-  const { post, banner } = getPost;
+  const { banner, post } = { banner: page, post: blogPost };
 
   return (
     <>
