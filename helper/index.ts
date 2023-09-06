@@ -587,6 +587,9 @@ query BlogListQuery {
       body {
         json
       }
+      system {
+        uid
+      }
     }
   }
 }
@@ -604,6 +607,7 @@ query BlogListQuery {
   blogs.forEach((blog: any) => {
     blog.featured_image = blog.featured_imageConnection.edges[0].node;
     blog.author = [blog.authorConnection.edges[0].node];
+    blog.uid = blog.system.uid;
   });
 
   const archivedBlogs = [] as BlogPosts[];
@@ -627,6 +631,7 @@ query BlogListQuery {
     blogs.forEach((entry: any) =>
       Utils.addEditableTags(entry, "blog_post", true)
     );
+  console.log("asdf", blogs);
 
   return {
     archivedBlogs,
