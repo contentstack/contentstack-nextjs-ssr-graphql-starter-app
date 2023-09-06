@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import RenderComponents from "../components/render-components";
 import { getPageRes } from "../helper";
 import Skeleton from "react-loading-skeleton";
@@ -9,7 +9,21 @@ export default function Page(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
   const { page } = props;
-  const [getEntry] = useState(page);
+  const [getEntry, setEntry] = useState(page);
+
+  async function fetchData() {
+    try {
+      const entryRes = await getPageRes(props.entryUrl);
+      if (!entryRes) throw new Error("Status code 404");
+      setEntry(entryRes);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, [props.entryUrl]);
 
   return getEntry.page_components ? (
     <RenderComponents
@@ -25,6 +39,7 @@ export default function Page(
 
 export const getServerSideProps: GetServerSideProps<{
   page: Props["page"];
+  entryUrl: string;
 }> = async ({ params }) => {
   if (!params || !params.page) return { notFound: true };
 
@@ -39,6 +54,7 @@ export const getServerSideProps: GetServerSideProps<{
     return {
       props: {
         page: entryRes,
+        entryUrl,
       },
     };
   } catch (error) {
