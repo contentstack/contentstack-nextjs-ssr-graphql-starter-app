@@ -659,7 +659,6 @@ query BlogListQuery {
     blogs.forEach((entry: any) =>
       Utils.addEditableTags(entry, "blog_post", true)
     );
-  console.log("asdf", blogs);
 
   return {
     archivedBlogs,
